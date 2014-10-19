@@ -1,6 +1,5 @@
 package com.zst.xposed.halo.floatingwindow.hooks.ipc;
 
-import java.util.HashMap;
 import com.zst.xposed.halo.floatingwindow.Common;
 import com.zst.xposed.halo.floatingwindow.helpers.AeroSnap;
 
