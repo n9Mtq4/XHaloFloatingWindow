@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/Will/AndroidStudioProjects/XHaloFloatingWindow/app/build/intermediates/pre-dexed/release/android-support-v13-7dcdf0d1ea34d267a82abfecf22d4f20754a84cf.jar"
+        jar="/Users/Will/AndroidStudioProjects/XHaloFloatingWindow/app/libs/android-support-v13.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="0c39cec0634e45ef67a1041708cf2d63b1a816b7"/>
+    <item
+        dex="/Users/Will/AndroidStudioProjects/XHaloFloatingWindow/app/build/intermediates/pre-dexed/release/XposedBridgeApi-54-e1b39fcc9ffa8d9a26b7842b7262b9ca375974d5.jar"
+        jar="/Users/Will/AndroidStudioProjects/XHaloFloatingWindow/app/libs/XposedBridgeApi-54.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="5f16da4d2ecb2c95be2556550e4a63461f43a99b"/>
+
+</pre-dex-items>
