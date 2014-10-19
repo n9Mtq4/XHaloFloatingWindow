@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +31,15 @@ public class RecentAppsHook {
 	static String TEXT_APP_INFO;
 	static String TEXT_OPEN_IN_HALO;
 	static String TEXT_REMOVE_FROM_LIST;
+	static String TEXT_FORCE_STOP;
+	static String TEXT_WIPE_APP_DATA;
 
 	public static void initZygote(XModuleResources module_res) {
 		TEXT_APP_INFO = module_res.getString(R.string.recents_app_info);
 		TEXT_OPEN_IN_HALO = module_res.getString(R.string.recents_open_halo);
 		TEXT_REMOVE_FROM_LIST = module_res.getString(R.string.recents_remove_from_list);
+		TEXT_FORCE_STOP = module_res.getString(R.string.recents_force_stop);
+		TEXT_WIPE_APP_DATA = module_res.getString(R.string.recents_wipe_app_data);
 	}
 
 	public static void handleLoadPackage(final LoadPackageParam lpp, final XSharedPreferences pref) {
@@ -61,9 +64,11 @@ public class RecentAppsHook {
 				thumbnailView.setSelected(true);
 
 				PopupMenu popup = new PopupMenu(thiz.getContext(), anchorView == null ? selectedView : anchorView);
-				popup.getMenu().add(Menu.NONE, ID_REMOVE_FROM_LIST, 1, TEXT_REMOVE_FROM_LIST);
-				popup.getMenu().add(Menu.NONE, ID_APP_INFO, 2, TEXT_APP_INFO);
-				popup.getMenu().add(Menu.NONE, ID_OPEN_IN_HALO, 3, TEXT_OPEN_IN_HALO);
+				popup.getMenu().add(TEXT_REMOVE_FROM_LIST);
+				popup.getMenu().add(TEXT_APP_INFO);
+				popup.getMenu().add(TEXT_FORCE_STOP);
+				popup.getMenu().add(TEXT_WIPE_APP_DATA);
+				popup.getMenu().add(TEXT_OPEN_IN_HALO);
 
 				try {
 					XposedHelpers.setObjectField(thiz, "mPopup", popup);
@@ -76,41 +81,43 @@ public class RecentAppsHook {
 				final PopupMenu.OnMenuItemClickListener menu = new PopupMenu.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						try {
-							switch (item.getItemId()) {
-								case ID_REMOVE_FROM_LIST:
-									ViewGroup recentsContainer = (ViewGroup) XposedHelpers
-											.getObjectField(thiz, "mRecentsContainer");
-									recentsContainer.removeViewInLayout(selectedView);
-									return true;
-								case ID_APP_INFO:
-									if (viewHolder != null) {
-										closeRecentApps(thiz);
-										Object ad = XposedHelpers.getObjectField(viewHolder, "taskDescription");
-										String pkg_name = (String) XposedHelpers.getObjectField(ad, "packageName");
-										startApplicationDetailsActivity(thiz.getContext(), pkg_name);
-									}
-									return true;
-								case ID_OPEN_IN_HALO:
-									if (viewHolder != null) {
-										closeRecentApps(thiz);
-										Object ad = XposedHelpers.getObjectField(viewHolder, "taskDescription");
-										final Intent intent = (Intent) XposedHelpers.getObjectField(ad, "intent");
-										intent.addFlags(Common.FLAG_FLOATING_WINDOW
-												| Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-												| Intent.FLAG_ACTIVITY_NO_USER_ACTION
-												| Intent.FLAG_ACTIVITY_NEW_TASK);
-										if (Build.VERSION.SDK_INT >= 19) {
-											thiz.post(new Runnable() {
-												@Override
-												public void run() {
-													thiz.getContext().startActivity(intent);
-												}
-											});
-										}else {
+							if (item.getTitle().equals(TEXT_REMOVE_FROM_LIST)) {
+								ViewGroup recentsContainer = (ViewGroup) XposedHelpers
+										.getObjectField(thiz, "mRecentsContainer");
+								recentsContainer.removeViewInLayout(selectedView);
+								return true;
+							}else if (item.getTitle().equals(TEXT_APP_INFO)) {
+								if (viewHolder != null) {
+									closeRecentApps(thiz);
+									Object ad = XposedHelpers.getObjectField(viewHolder, "taskDescription");
+									String pkg_name = (String) XposedHelpers.getObjectField(ad, "packageName");
+									startApplicationDetailsActivity(thiz.getContext(), pkg_name);
+								}
+								return true;
+							}else if (item.getTitle().equals(TEXT_FORCE_STOP)) {
+								return true;
+							}else if (item.getTitle().equals(TEXT_WIPE_APP_DATA)) {
+							}else if (item.getTitle().equals(TEXT_OPEN_IN_HALO)) {
+								closeRecentApps(thiz);
+								Object ad = XposedHelpers.getObjectField(viewHolder, "taskDescription");
+								final Intent intent = (Intent) XposedHelpers.getObjectField(ad, "intent");
+								intent.addFlags(Common.FLAG_FLOATING_WINDOW
+										| Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+										| Intent.FLAG_ACTIVITY_NO_USER_ACTION
+										| Intent.FLAG_ACTIVITY_NEW_TASK);
+								if (Build.VERSION.SDK_INT >= 19) {
+									thiz.post(new Runnable() {
+										@Override
+										public void run() {
 											thiz.getContext().startActivity(intent);
 										}
-									}
-									return true;
+									});
+								}else {
+									thiz.getContext().startActivity(intent);
+								}
+								return true;
+							}else {
+								return false;
 							}
 						}catch (Throwable t) {
 							XposedBridge.log(Common.LOG_TAG + "RecentAppsHook / onMenuItemClick (" + item.getItemId() + ")");
