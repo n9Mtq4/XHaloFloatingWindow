@@ -12,16 +12,17 @@ import com.zst.xposed.halo.floatingwindow.Common;
 import com.zst.xposed.halo.floatingwindow.R;
 
 public class MovableFragment extends PreferenceFragment {
-	
+
 	static MovableFragment mInstance;
 	SharedPreferences mPref;
-	
+
 	public static MovableFragment getInstance() {
 		if (mInstance == null) {
 			mInstance = new MovableFragment();
 		}
 		return mInstance;
 	}
+
 	@Override
 	@SuppressWarnings("deprecation")
 	@SuppressLint("WorldReadableFiles")

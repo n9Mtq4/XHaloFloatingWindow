@@ -1,7 +1,5 @@
 package com.zst.xposed.halo.floatingwindow.preferences;
 
-import com.zst.xposed.halo.floatingwindow.R;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -10,14 +8,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import com.zst.xposed.halo.floatingwindow.R;
+
 public class WidgetNumberPicker extends DialogPreference {
-	
-	private NumberPicker picker;
+
 	int mDefaultValue;
 	int mMinValue;
 	int mMaxValue;
 	SharedPreferences mPref;
-	
+	private NumberPicker picker;
+
 	public WidgetNumberPicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setDialogLayoutResource(R.layout.dialog_number_picker);
@@ -25,7 +25,7 @@ public class WidgetNumberPicker extends DialogPreference {
 		mMinValue = (Integer.parseInt(attrs.getAttributeValue(null, "minimum")));
 		mMaxValue = (Integer.parseInt(attrs.getAttributeValue(null, "maximum")));
 	}
-	
+
 	@Override
 	protected View onCreateDialogView() {
 		View view = super.onCreateDialogView();
@@ -33,21 +33,21 @@ public class WidgetNumberPicker extends DialogPreference {
 		picker = (NumberPicker) view.findViewById(R.id.number_picker);
 		picker.setMaxValue(mMaxValue);
 		picker.setMinValue(mMinValue);
-		
+
 		return view;
 	}
-	
+
 	@Override
 	public void onDismiss(DialogInterface dialog) {
 		super.onDismiss(dialog);
 	}
-	
+
 	@Override
 	protected void onBindDialogView(View view) {
 		super.onBindDialogView(view);
 		picker.setValue(mPref.getInt(getKey(), mDefaultValue));
 	}
-	
+
 	@Override
 	protected void onDialogClosed(boolean positiveResult) {
 		super.onDialogClosed(positiveResult);

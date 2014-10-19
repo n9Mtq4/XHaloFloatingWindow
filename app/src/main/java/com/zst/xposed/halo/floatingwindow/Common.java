@@ -1,9 +1,9 @@
 package com.zst.xposed.halo.floatingwindow;
 
-import com.zst.xposed.halo.floatingwindow.preferences.TitleBarSettingsActivity;
-
 import android.os.Build;
 import android.view.Gravity;
+
+import com.zst.xposed.halo.floatingwindow.preferences.TitleBarSettingsActivity;
 
 public class Common {
 
@@ -13,8 +13,17 @@ public class Common {
 	public static final String PREFERENCE_BLACKLIST_FILE = THIS_PACKAGE_NAME + "_blacklist";
 	public static final String PREFERENCE_WHITELIST_FILE = THIS_PACKAGE_NAME + "_whitelist";
 	public static final String PREFERENCE_STATUSBAR_LAUNCHER_FILE = THIS_PACKAGE_NAME + "_statusbar_launcher";
-	
-
+	public static final String EXTRA_SNAP_SIDE = THIS_PACKAGE_NAME + ".EXTRA_SNAP_SIDE";
+	public static final String REFRESH_APP_LAYOUT = THIS_PACKAGE_NAME + ".REFRESH_APP_LAYOUT";
+	/* SystemUI Broadcast */
+	public static final String STATUSBAR_TASKBAR_REFRESH = THIS_PACKAGE_NAME + ".STATUSBAR_TASKBAR_REFRESH";
+	public static final String STATUSBAR_TASKBAR_LAUNCH = THIS_PACKAGE_NAME + ".STATUSBAR_TASKBAR_LAUNCH";
+	public static final String SHOW_OUTLINE = THIS_PACKAGE_NAME + ".SHOW_OUTLINE";
+	public static final String SHOW_MULTIWINDOW_DRAGGER = THIS_PACKAGE_NAME + ".SHOW_MULTIWINDOW_DRAGGER";
+	public static final String SEND_MULTIWINDOW_INFO = THIS_PACKAGE_NAME + ".SEND_MULTIWINDOW_INFO";
+	public static final String SEND_MULTIWINDOW_APP_FOCUS = THIS_PACKAGE_NAME + ".SEND_MULTIWINDOW_APP_FOCUS";
+	public static final String REMOVE_NOTIFICATION_RESTORE = THIS_PACKAGE_NAME + ".REMOVE_NOTIFICATION_RESTORE.";
+	public static final String SEND_MULTIWINDOW_SWIPE = THIS_PACKAGE_NAME + ".SEND_MULTIWINDOW_SWIPE.";
 	/* Preference keys */
 	public static final String KEY_ALPHA = "window_alpha";
 	public static final String KEY_DIM = "window_dim";
@@ -88,8 +97,6 @@ public class Common {
 	public static final String KEY_STATUSBAR_TASKBAR_RUNNING_APPS_ENABLED = "statusbar_taskbar_running_enabled";
 	public static final String KEY_STATUSBAR_TASKBAR_HIDE_ICON = "statusbar_taskbar_hide_icon";
 	public static final String KEY_STATUSBAR_TASKBAR_NUMBER = "statusbar_taskbar_number";
-	
-
 	/* Preference defaults */
 	public static final float DEFAULT_ALPHA = 1f;
 	public static final float DEFAULT_DIM = 0.25f;
@@ -157,27 +164,13 @@ public class Common {
 	public static final boolean DEFAULT_STATUSBAR_TASKBAR_RUNNING_APPS_ENABLED = true;
 	public static final boolean DEFAULT_STATUSBAR_TASKBAR_HIDE_ICON = false;
 	public static final int DEFAULT_STATUSBAR_TASKBAR_NUMBER = 5;
-
 	/* Xposed Constants */
 	public static final int FLAG_FLOATING_WINDOW = 0x00002000;
-	public static final String EXTRA_SNAP_SIDE = THIS_PACKAGE_NAME + ".EXTRA_SNAP_SIDE";
-	public static final String REFRESH_APP_LAYOUT = THIS_PACKAGE_NAME + ".REFRESH_APP_LAYOUT";
-
 	/* Others */
 	public static final String LOG_TAG = "XHaloFloatingWindow(SDK: " + Build.VERSION.SDK_INT + ") - ";
 	public static final int LAYOUT_RECEIVER_TAG = android.R.id.background;
 	public static final int LAYOUT_OVERLAY_TAG = android.R.id.extractArea;
 	public static final String XDA_THREAD = "http://forum.xda-developers.com/showthread.php?t=2419287";
-
-	/* SystemUI Broadcast */
-	public static final String STATUSBAR_TASKBAR_REFRESH = THIS_PACKAGE_NAME + ".STATUSBAR_TASKBAR_REFRESH";
-	public static final String STATUSBAR_TASKBAR_LAUNCH = THIS_PACKAGE_NAME + ".STATUSBAR_TASKBAR_LAUNCH";
-	public static final String SHOW_OUTLINE = THIS_PACKAGE_NAME + ".SHOW_OUTLINE";
-	public static final String SHOW_MULTIWINDOW_DRAGGER = THIS_PACKAGE_NAME + ".SHOW_MULTIWINDOW_DRAGGER";
-	public static final String SEND_MULTIWINDOW_INFO = THIS_PACKAGE_NAME + ".SEND_MULTIWINDOW_INFO";
-	public static final String SEND_MULTIWINDOW_APP_FOCUS = THIS_PACKAGE_NAME + ".SEND_MULTIWINDOW_APP_FOCUS";
-	public static final String REMOVE_NOTIFICATION_RESTORE = THIS_PACKAGE_NAME + ".REMOVE_NOTIFICATION_RESTORE.";
-	public static final String SEND_MULTIWINDOW_SWIPE = THIS_PACKAGE_NAME + ".SEND_MULTIWINDOW_SWIPE.";
 	public static final String INTENT_APP_TOKEN = "token";
 	public static final String INTENT_APP_ID = "id";
 	public static final String INTENT_APP_PARAMS = "layout_paramz";

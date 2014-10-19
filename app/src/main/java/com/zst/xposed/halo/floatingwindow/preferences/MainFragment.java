@@ -1,15 +1,13 @@
 package com.zst.xposed.halo.floatingwindow.preferences;
 
-import java.io.DataOutputStream;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.view.View;
@@ -22,17 +20,20 @@ import android.widget.Toast;
 import com.zst.xposed.halo.floatingwindow.Common;
 import com.zst.xposed.halo.floatingwindow.R;
 
+import java.io.DataOutputStream;
+
 public class MainFragment extends PreferenceFragment implements OnPreferenceClickListener {
-	
+
 	static MainFragment mInstance;
 	SharedPreferences mPref;
-	
+
 	public static MainFragment getInstance() {
 		if (mInstance == null) {
 			mInstance = new MainFragment();
 		}
 		return mInstance;
 	}
+
 	@Override
 	@SuppressWarnings("deprecation")
 	@SuppressLint("WorldReadableFiles")
@@ -50,14 +51,14 @@ public class MainFragment extends PreferenceFragment implements OnPreferenceClic
 		mPref = getActivity().getSharedPreferences(Common.PREFERENCE_MAIN_FILE,
 				PreferenceActivity.MODE_WORLD_READABLE);
 	}
-	
+
 	@Override
 	public boolean onPreferenceClick(Preference p) {
 		String k = p.getKey();
 		if (k.equals(Common.KEY_KEYBOARD_MODE)) {
 			showKeyboardDialog();
 			return true;
-		} else if (k.equals(Common.KEY_RESTART_SYSTEMUI)
+		}else if (k.equals(Common.KEY_RESTART_SYSTEMUI)
 				|| k.equals(Common.KEY_STATUSBAR_TASKBAR_RESTART_SYSTEMUI)) {
 			showKillPackageDialog("com.android.systemui");
 			return true;
@@ -73,22 +74,22 @@ public class MainFragment extends PreferenceFragment implements OnPreferenceClic
 		}
 		return false;
 	}
-	
+
 	private void showKeyboardDialog() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final ListView modeList = new ListView(getActivity());
-		
+
 		builder.setView(modeList);
 		builder.setTitle(R.string.pref_keyboard_title);
-		
+
 		final AlertDialog dialog = builder.create();
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, android.R.id.text1);
-		
+
 		adapter.add(getResources().getString(R.string.keyboard_default));
 		adapter.add(getResources().getString(R.string.keyboard_pan));
 		adapter.add(getResources().getString(R.string.keyboard_scale));
-		
+
 		modeList.setAdapter(adapter);
 		modeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -97,9 +98,9 @@ public class MainFragment extends PreferenceFragment implements OnPreferenceClic
 						.getText().toString();
 				if (title.equals(getResources().getString(R.string.keyboard_default))) {
 					mPref.edit().putInt(Common.KEY_KEYBOARD_MODE, 1).commit();
-				} else if (title.equals(getResources().getString(R.string.keyboard_pan))) {
+				}else if (title.equals(getResources().getString(R.string.keyboard_pan))) {
 					mPref.edit().putInt(Common.KEY_KEYBOARD_MODE, 2).commit();
-				} else if (title.equals(getResources().getString(R.string.keyboard_scale))) {
+				}else if (title.equals(getResources().getString(R.string.keyboard_scale))) {
 					mPref.edit().putInt(Common.KEY_KEYBOARD_MODE, 3).commit();
 				}
 				Toast.makeText(getActivity(), title, Toast.LENGTH_SHORT).show();
@@ -108,7 +109,7 @@ public class MainFragment extends PreferenceFragment implements OnPreferenceClic
 		});
 		dialog.show();
 	}
-	
+
 	private void showKillPackageDialog(final String pkgToKill) {
 		AlertDialog.Builder build = new AlertDialog.Builder(getActivity());
 		build.setMessage(R.string.pref_systemui_restart_title);
@@ -121,7 +122,7 @@ public class MainFragment extends PreferenceFragment implements OnPreferenceClic
 		});
 		build.show();
 	}
-	
+
 	private void killPackage(final String pkgToKill) {
 		new Thread(new Runnable() {
 			@Override
@@ -134,21 +135,21 @@ public class MainFragment extends PreferenceFragment implements OnPreferenceClic
 					os.writeBytes("exit\n");
 					su.waitFor();
 					os.close();
-				} catch (Throwable e) {
+				}catch (Throwable e) {
 					e.printStackTrace();
 				}
 			}
 		}).start();
 	}
-	
+
 	private void showStatusbarTaskbarPinAppActivity() {
 		startActivity(new Intent(getActivity(), StatusbarTaskbarPinAppActivity.class));
 	}
-	
+
 	private void showWhitelistActivity() {
 		startActivity(new Intent(getActivity(), WhitelistActivity.class));
 	}
-	
+
 	private void showBlacklistActivity() {
 		startActivity(new Intent(getActivity(), BlacklistActivity.class));
 	}

@@ -6,11 +6,11 @@ import android.view.WindowManager;
 import android.widget.SeekBar;
 
 public class WidgetWindowAlphaPicker extends WidgetFloatPercentage {
-	
+
 	public WidgetWindowAlphaPicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
-	
+
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		super.onProgressChanged(seekBar, progress, fromUser);
@@ -21,5 +21,5 @@ public class WidgetWindowAlphaPicker extends WidgetFloatPercentage {
 			getDialog().getWindow().setAttributes(lp);
 		}
 	}
-	
+
 }

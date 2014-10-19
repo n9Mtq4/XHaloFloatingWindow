@@ -1,12 +1,5 @@
 package com.zst.xposed.halo.floatingwindow.hooks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import com.zst.xposed.halo.floatingwindow.Common;
-import com.zst.xposed.halo.floatingwindow.R;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Notification;
@@ -23,38 +16,47 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.widget.RemoteViews;
+
+import com.zst.xposed.halo.floatingwindow.Common;
+import com.zst.xposed.halo.floatingwindow.R;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
-import static de.robv.android.xposed.XposedHelpers.findClass;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class StatusbarTaskbar {
 	private static final int NOTIFICATION_ID_RUNNING = 0xABCDEF;
 	private static final int NOTIFICATION_ID_PINNED = 0xFEDCBA;
-	
+
 	private static XSharedPreferences mStatusBarApps;
 	private static NotificationManager mNotificationManager;
 	private static List<RunningTaskInfo> mRunningAppsList;
 	private static int mNumber;
 	private static boolean mHideIcon;
-	
+
 	public static void handleLoadPackage(LoadPackageParam lpp, final XSharedPreferences main_pref) {
 		if (!lpp.packageName.equals("com.android.systemui")) return;
-		
+
 		if (mStatusBarApps == null)
 			mStatusBarApps = new XSharedPreferences(Common.THIS_PACKAGE_NAME,
 					Common.PREFERENCE_STATUSBAR_LAUNCHER_FILE);
-		
+
 		if (!main_pref.getBoolean(Common.KEY_STATUSBAR_TASKBAR_ENABLED, Common.DEFAULT_STATUSBAR_TASKBAR_ENABLED))
 			return;
-		
-		mNumber = main_pref.getInt(Common.KEY_STATUSBAR_TASKBAR_NUMBER, 
+
+		mNumber = main_pref.getInt(Common.KEY_STATUSBAR_TASKBAR_NUMBER,
 				Common.DEFAULT_STATUSBAR_TASKBAR_NUMBER);
-		
+
 		mHideIcon = main_pref.getBoolean(Common.KEY_STATUSBAR_TASKBAR_HIDE_ICON,
 				Common.DEFAULT_STATUSBAR_TASKBAR_HIDE_ICON);
-		
+
 		final Class<?> hookClass = findClass("com.android.systemui.statusbar.phone.PhoneStatusBarView", lpp.classLoader);
 		XposedBridge.hookAllConstructors(hookClass, new XC_MethodHook() {
 			@Override
@@ -66,7 +68,7 @@ public class StatusbarTaskbar {
 						setup(context);
 					}
 				}, new IntentFilter(Common.STATUSBAR_TASKBAR_REFRESH), null, null);
-				
+
 				final PackageManager pm = context.getPackageManager();
 				context.registerReceiver(new BroadcastReceiver() {
 					@Override
@@ -80,7 +82,7 @@ public class StatusbarTaskbar {
 						}
 					}
 				}, new IntentFilter(Common.STATUSBAR_TASKBAR_LAUNCH), null, null);
-				
+
 				if (main_pref.getBoolean(Common.KEY_STATUSBAR_TASKBAR_RUNNING_APPS_ENABLED,
 						Common.DEFAULT_STATUSBAR_TASKBAR_RUNNING_APPS_ENABLED)) {
 					final Handler handler = new Handler(context.getMainLooper());
@@ -94,16 +96,16 @@ public class StatusbarTaskbar {
 						}
 					};
 					handler.postDelayed(runnable, 15000);
-					
+
 					final IntentFilter filter = new IntentFilter();
 					filter.addAction(Intent.ACTION_SCREEN_ON);
 					filter.addAction(Intent.ACTION_SCREEN_OFF);
 					context.registerReceiver(new BroadcastReceiver() {
 						@Override
 						public void onReceive(Context ctx, Intent intent) {
-							if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
+							if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 								handler.removeCallbacks(runnable);
-							} else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
+							}else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
 								handler.postDelayed(runnable, 15000);
 							}
 						}
@@ -114,13 +116,13 @@ public class StatusbarTaskbar {
 			}
 		});
 	}
-	
-	
+
+
 	public static void setup(Context context) {
 		if (context == null) return;
-		
+
 		clearNotifications(context, NOTIFICATION_ID_PINNED);
-		
+
 		RemoteViews view = new RemoteViews(Common.THIS_PACKAGE_NAME,
 				R.layout.view_statusbar_taskbar_holder);
 		ArrayList<Map.Entry<String, ?>> sorted_entries = getPinnedApps();
@@ -136,14 +138,14 @@ public class StatusbarTaskbar {
 		if (index == 100)
 			return; // no items are added
 		addNotification(context, view, NOTIFICATION_ID_PINNED);
-		
+
 	}
-	
+
 	public static void refreshRunningApps(Context context) {
 		if (context == null) return;
-		
+
 		clearNotifications(context, NOTIFICATION_ID_RUNNING);
-		
+
 		RemoteViews rview = new RemoteViews(Common.THIS_PACKAGE_NAME,
 				R.layout.view_statusbar_taskbar_holder);
 		int index = 200;
@@ -158,31 +160,31 @@ public class StatusbarTaskbar {
 		}
 		addNotification(context, rview, NOTIFICATION_ID_RUNNING);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public static void addNotification(Context context, RemoteViews view, int id) {
 		Notification.Builder nb = new Notification.Builder(context)
 				.setContent(view)
 				.setSmallIcon(mHideIcon ? android.R.drawable.list_selector_background :
-					android.R.drawable.presence_invisible)
+						android.R.drawable.presence_invisible)
 				.setOngoing(true)
 				.setWhen(0);
 		Notification notification;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			nb.setPriority(Notification.PRIORITY_MAX);
 			notification = nb.build();
-		} else {
+		}else {
 			notification = nb.getNotification();
 		}
 		getNotificationManager(context).notify(id, notification);
 	}
-	
+
 	public static void clearNotifications(Context context, int id) {
 		if (context != null) {
 			getNotificationManager(context).cancel(id);
 		}
 	}
-	
+
 	private static NotificationManager getNotificationManager(Context ctx) {
 		if (mNotificationManager == null) {
 			mNotificationManager = (NotificationManager) ctx
@@ -190,7 +192,7 @@ public class StatusbarTaskbar {
 		}
 		return mNotificationManager;
 	}
-	
+
 	private static ArrayList<Map.Entry<String, ?>> getPinnedApps() {
 		mStatusBarApps.reload();
 		Map<String, ?> apps = mStatusBarApps.getAll();
@@ -200,20 +202,20 @@ public class StatusbarTaskbar {
 		}
 		return array;
 	}
-	
+
 	private static class AppIconButton {
 		Drawable icon;
 		RemoteViews view;
-		
+
 		public AppIconButton(Context context, int id_number, String package_name) {
 			view = new RemoteViews(Common.THIS_PACKAGE_NAME,
 					R.layout.view_statusbar_taskbar_icon);
-			
+
 			try {
 				final PackageManager pm = context.getPackageManager();
 				final ApplicationInfo ai = pm.getApplicationInfo(package_name, 0);
 				icon = ai.loadIcon(pm);
-			} catch (Exception e) {
+			}catch (Exception e) {
 				icon = context.getResources().getDrawable(android.R.drawable.sym_def_app_icon);
 			}
 			final Intent intent = new Intent(Common.STATUSBAR_TASKBAR_LAUNCH);

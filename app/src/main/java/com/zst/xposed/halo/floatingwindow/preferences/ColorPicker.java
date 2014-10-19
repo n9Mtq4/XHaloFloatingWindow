@@ -18,9 +18,6 @@
 package com.zst.xposed.halo.floatingwindow.preferences;
 
 
-import com.zst.xposed.halo.floatingwindow.R;
-import com.zst.xposed.halo.floatingwindow.preferences.colorpicker.ColorSettingsDialog;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,8 +30,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.zst.xposed.halo.floatingwindow.R;
+import com.zst.xposed.halo.floatingwindow.preferences.colorpicker.ColorSettingsDialog;
+
 public class ColorPicker extends Preference implements OnPreferenceClickListener {
-	
+
 	SharedPreferences mPref;
 	ImageView mColorBox;
 	Resources mRes;
@@ -42,13 +42,13 @@ public class ColorPicker extends Preference implements OnPreferenceClickListener
 
 	public ColorPicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
+
 		mDefaultColor = attrs.getAttributeValue(null, "defaultValue");
 	}
 
 	@Override
 	protected void onBindView(View view) {
-		super.onBindView(view);		
+		super.onBindView(view);
 		mColorBox = (ImageView) view.findViewById(android.R.id.icon);
 		mPref = getPreferenceManager().getSharedPreferences();
 		mRes = getContext().getResources();
@@ -62,13 +62,13 @@ public class ColorPicker extends Preference implements OnPreferenceClickListener
 		final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				switch (which){
-				case AlertDialog.BUTTON_POSITIVE:
-					setColor(d.getColorString());
-					break;
-				case AlertDialog.BUTTON_NEUTRAL:
-					setColor(mDefaultColor);
-					break;
+				switch (which) {
+					case AlertDialog.BUTTON_POSITIVE:
+						setColor(d.getColorString());
+						break;
+					case AlertDialog.BUTTON_NEUTRAL:
+						setColor(mDefaultColor);
+						break;
 				}
 			}
 		};
@@ -78,24 +78,25 @@ public class ColorPicker extends Preference implements OnPreferenceClickListener
 		d.show();
 		return true;
 	}
-		
+
 	public String getColorString() {
 		return Integer.toHexString(getColor());
 	}
-	
+
 	public int getColor() {
 		String str = mPref.getString(getKey(), mDefaultColor);
-		return Color.parseColor("#"+str);
+		return Color.parseColor("#" + str);
 	}
-	
-	private void refreshColorBox(){
+
+	public void setColor(String clr) {
+		mPref.edit().putString(getKey(), clr).commit();
+		refreshColorBox();
+	}
+
+	private void refreshColorBox() {
 		if (mColorBox != null) {
 			mColorBox.setBackgroundColor(getColor());
 			mColorBox.setVisibility(View.VISIBLE);
 		}
-	}
-	public void setColor(String clr) {
-		mPref.edit().putString(getKey(), clr).commit();
-		refreshColorBox();
 	}
 }

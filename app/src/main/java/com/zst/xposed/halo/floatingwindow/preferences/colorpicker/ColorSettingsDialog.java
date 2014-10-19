@@ -1,10 +1,5 @@
 package com.zst.xposed.halo.floatingwindow.preferences.colorpicker;
 
-import java.util.Locale;
-
-import com.zst.xposed.halo.floatingwindow.R;
-import com.zst.xposed.halo.floatingwindow.preferences.colorpicker.ColorPickerView.OnColorChangedListener;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -13,6 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.zst.xposed.halo.floatingwindow.R;
+import com.zst.xposed.halo.floatingwindow.preferences.colorpicker.ColorPickerView.OnColorChangedListener;
+
+import java.util.Locale;
 
 public class ColorSettingsDialog extends AlertDialog implements
 		ColorPickerView.OnColorChangedListener {
@@ -35,43 +35,43 @@ public class ColorSettingsDialog extends AlertDialog implements
 	}
 
 	private void setUp(int color, final String defColor) {
-        mInflater = (LayoutInflater) getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mInflater = (LayoutInflater) getContext()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View layout = mInflater.inflate(R.layout.dialog_colorpicker, null);
+		View layout = mInflater.inflate(R.layout.dialog_colorpicker, null);
 
-        mColorPicker = (ColorPickerView) layout.findViewById(R.id.color_picker_view);
-        mOldColor = (ColorPanelView) layout.findViewById(R.id.old_color_panel);
-        mNewColor = (ColorPanelView) layout.findViewById(R.id.new_color_panel);
-        mHexColor = (EditText) layout.findViewById(R.id.current_hex_text);
+		mColorPicker = (ColorPickerView) layout.findViewById(R.id.color_picker_view);
+		mOldColor = (ColorPanelView) layout.findViewById(R.id.old_color_panel);
+		mNewColor = (ColorPanelView) layout.findViewById(R.id.new_color_panel);
+		mHexColor = (EditText) layout.findViewById(R.id.current_hex_text);
 
-        mColorPicker.setOnColorChangedListener(this);
-        mOldColor.setColor(color);
-        mColorPicker.setColor(color, true);
+		mColorPicker.setOnColorChangedListener(this);
+		mOldColor.setColor(color);
+		mColorPicker.setColor(color, true);
 
-        mHexButton = (Button) layout.findViewById(R.id.color_apply);
-        mHexButton.setOnClickListener(new View.OnClickListener(){
-        	@Override
-        	public void onClick(View v) {
-        		try{
-        			int color = Color.parseColor("#" + mHexColor.getText().toString());
-        			mColorPicker.setColor(color);
-        			colorChange(color);
-        		}catch(Exception e){
-        			mHexColor.setText("FFFFFF");
-        		}
-        	}
-        });
+		mHexButton = (Button) layout.findViewById(R.id.color_apply);
+		mHexButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
+					int color = Color.parseColor("#" + mHexColor.getText().toString());
+					mColorPicker.setColor(color);
+					colorChange(color);
+				}catch (Exception e) {
+					mHexColor.setText("FFFFFF");
+				}
+			}
+		});
 
-        setView(layout);
-    }
+		setView(layout);
+	}
 
 	@Override
 	public void onColorChanged(int color) {
 		colorChange(color);
 	}
 
-	private void colorChange(int color){
+	private void colorChange(int color) {
 		mNewColor.setColor(color);
 		mHexColor.setText(Integer.toHexString(color).toUpperCase(Locale.ENGLISH).substring(2));
 		if (mListener != null) {

@@ -1,10 +1,5 @@
 package com.zst.xposed.halo.floatingwindow.helpers;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-
-import de.robv.android.xposed.XposedHelpers;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -18,8 +13,14 @@ import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+
+import de.robv.android.xposed.XposedHelpers;
+
 public class Util {
-	
+
 	/* Get System DPI from build.prop 
 	 * Some ROMs have Per-App DPI and it might make our views inconsistent 
 	 * Fallback to app dpi if it fails*/
@@ -34,7 +35,7 @@ public class Util {
 				dpi = line;
 			}
 			p.destroy();
-		} catch (Exception e) {
+		}catch (Exception e) {
 			dpi = "0";
 			//failed, set to zero.
 		}
@@ -42,20 +43,20 @@ public class Util {
 		if (scale == 0) {
 			// zero means it failed in getting dpi, fallback to app dpi 
 			scale = c.getResources().getDisplayMetrics().density;
-		} else {
+		}else {
 			scale = (scale / 160);
 		}
 		int pixel = (int) (dp * scale + 0.5f);
 		return pixel;
 	}
-	
+
 	/* Get App DPI */
 	public static int dp(int dp, Context c) {
 		float scale = c.getResources().getDisplayMetrics().density;
 		int pixel = (int) (dp * scale + 0.5f);
 		return pixel;
 	}
-	
+
 	/* Create a Border */
 	public static ShapeDrawable makeOutline(int color, int thickness) {
 		ShapeDrawable rectShapeDrawable = new ShapeDrawable(new RectShape());
@@ -65,7 +66,7 @@ public class Util {
 		paint.setStrokeWidth(thickness);
 		return rectShapeDrawable;
 	}
-	
+
 	public static ShapeDrawable makeCircle(int color, int diameter) {
 		ShapeDrawable shape = new ShapeDrawable(new OvalShape());
 		Paint paint = shape.getPaint();
@@ -76,10 +77,10 @@ public class Util {
 		shape.setIntrinsicWidth(diameter);
 		return shape;
 	}
-	
+
 	/* Rotate a drawable given an angle */
 	public static Drawable getRotateDrawable(final Drawable d, final float angle) {
-		final Drawable[] array = { d };
+		final Drawable[] array = {d};
 		return new LayerDrawable(array) {
 			@Override
 			public void draw(final Canvas canvas) {
@@ -90,25 +91,25 @@ public class Util {
 			}
 		};
 	}
-	
+
 	/* Set background drawable based on the API */
 	@SuppressWarnings("deprecation")
 	public static void setBackgroundDrawable(View view, Drawable drawable) {
 		if (Build.VERSION.SDK_INT >= 16) {
 			view.setBackground(drawable);
-		} else {
+		}else {
 			view.setBackgroundDrawable(drawable);
 		}
 	}
-	
+
 	public static void addPrivateFlagNoMoveAnimationToLayoutParam(WindowManager.LayoutParams params) {
 		if (Build.VERSION.SDK_INT <= 15) return;
-		
+
 		try {
 			Field fieldPrivateFlag = XposedHelpers.findField(WindowManager.LayoutParams.class, "privateFlags");
 			fieldPrivateFlag.setInt(params, (fieldPrivateFlag.getInt(params) | 0x00000040));
-		} catch (Exception e) {
-			
+		}catch (Exception e) {
+
 		}
 		/* this private flag is only in JB and above to turn off move animation.
 		 * we need this to speed up our resizing */
