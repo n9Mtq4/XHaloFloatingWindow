@@ -35,6 +35,9 @@ public class NotificationShadeHook {
 	static String TEXT_OPEN_IN_NORMALLY;
 	static String TEXT_APP_INFO;
 	static String TEXT_FORCE_STOP;
+	static String TEXT_WIPE_APP_DATA;
+	static String TEXT_IGNORE_THIS;
+
 	static String TEXT_ERROR_LAUNCHING;
 	/* Android 4.2+ (Start) */
 	static Intent stolenIntent;
@@ -45,6 +48,8 @@ public class NotificationShadeHook {
 		TEXT_OPEN_IN_HALO = module_res.getString(R.string.notif_open_halo);
 		TEXT_OPEN_IN_NORMALLY = module_res.getString(R.string.notif_open_normal);
 		TEXT_FORCE_STOP = module_res.getString(R.string.notif_force_stop);
+		TEXT_WIPE_APP_DATA = module_res.getString(R.string.notif_wipe_app_data);
+		TEXT_IGNORE_THIS = module_res.getString(R.string.notif_ignore_notif);
 	}
 
 	public static void hook(final LoadPackageParam lpp, final XSharedPreferences pref) {
@@ -250,7 +255,11 @@ public class NotificationShadeHook {
 									if (v.getWindowToken() == null) return false;
 
 									PopupMenu popup = new PopupMenu(mContext, v);
-									popup.getMenu().add(TEXT_APP_INFO);
+//									start of n9mtq4 edits
+									popup.getMenu().add(TEXT_APP_INFO); //app info
+									popup.getMenu().add(TEXT_FORCE_STOP); //force stop
+									popup.getMenu().add(TEXT_WIPE_APP_DATA); //wipe app data
+									popup.getMenu().add(TEXT_IGNORE_THIS); //ignore messages like this
 									if (!mSinglePressEnabled) {
 										popup.getMenu().add(TEXT_OPEN_IN_HALO);
 									}else {
@@ -375,7 +384,8 @@ public class NotificationShadeHook {
 	}
 
 	private static void closeNotificationShade(Context c) {
-		final Object statusBar = /* StatusBarManager */ c.getSystemService("statusbar");
+//		final Object statusBar = /* StatusBarManager */ c.getSystemService("statusbar");
+		final Object statusBar = c.getSystemService(Context.NOTIFICATION_SERVICE);
 		if (statusBar == null) return;
 		try {
 			XposedHelpers.callMethod(statusBar, "collapse");
