@@ -1,4 +1,4 @@
-XHaloFloatingWindow (XHFW)
+XHaloFloatingWindow (Not currently working)
 ---------
 #### About
 XHaloFloatingWindow is ParanoidAndroid HALO popup window ported to rovo89's Xposed Framework.
